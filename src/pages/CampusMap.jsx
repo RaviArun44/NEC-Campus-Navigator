@@ -453,7 +453,6 @@ export default function CampusMap() {
       {isMobile && !isNavigating && (
         <button
           className={styles.mobileListToggle}
-          style={{ top: selected ? '60px' : '12px' }}
           onClick={() => setSidebarCollapsedMobile(!sidebarCollapsedMobile)}
         >
           {sidebarCollapsedMobile ? '🔍 Search & Locations List' : '✕ Close List'}
