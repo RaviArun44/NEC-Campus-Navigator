@@ -415,10 +415,44 @@ export default function CampusMap() {
 
   return (
     <div className={`${styles.page} ${isMobile ? styles.mobileLayout : ''}`}>
+      {/* Mobile Top Action Bar */}
+      {isMobile && selected && (
+        <div className={styles.mobileTopActionBar}>
+          <button
+            className={styles.mobileActionBtn}
+            style={{ background: '#7c3aed', borderColor: '#7c3aed' }}
+            onClick={() => {
+              stopWatch();
+              setNavInfo(null);
+              setLocError(null);
+              setMapSrc(buildMapUrl(selected.mapQuery, selected.zoom));
+            }}
+          >
+            👁️ Overview
+          </button>
+          <button
+            className={styles.mobileActionBtn}
+            style={{ background: '#4086ff', borderColor: '#4086ff' }}
+            onClick={() => handleNavigate(selected)}
+            disabled={isLocating}
+          >
+            {isLocating ? '⏳ Locating...' : '🧭 Navigate'}
+          </button>
+          <button
+            className={styles.mobileActionBtn}
+            style={{ background: '#f59e0b', borderColor: '#f59e0b' }}
+            onClick={() => openInGoogleMaps(selected)}
+          >
+            📍 Open in Maps
+          </button>
+        </div>
+      )}
+
       {/* Mobile Floating Trigger to toggle sidebar */}
       {isMobile && !isNavigating && (
         <button
           className={styles.mobileListToggle}
+          style={{ top: selected ? '60px' : '12px' }}
           onClick={() => setSidebarCollapsedMobile(!sidebarCollapsedMobile)}
         >
           {sidebarCollapsedMobile ? '🔍 Search & Locations List' : '✕ Close List'}
@@ -663,43 +697,6 @@ export default function CampusMap() {
               </span>
             </div>
 
-            {/* If routing hasn't been done yet (Show Overview, Navigate, and Open in Maps) */}
-            {!navInfo && !locError && (
-              <div style={{ display: 'flex', gap: '0.4rem', marginTop: '0.6rem', flexWrap: 'wrap' }}>
-                <button
-                  className={styles.openMapsBtn}
-                  style={{ flex: 1, minWidth: '75px', padding: '0.55rem 0.2rem', fontSize: '0.74rem', background: 'linear-gradient(135deg, #a78bfa, #7c3aed)', color: '#fff', justifyContent: 'center' }}
-                  onClick={() => {
-                    stopWatch();
-                    setNavInfo(null);
-                    setLocError(null);
-                    setMapSrc(buildMapUrl(selected.mapQuery, selected.zoom));
-                  }}
-                >
-                  👁️ Overview
-                </button>
-                <button
-                  className={styles.navigateBtn}
-                  style={{ flex: 1, minWidth: '75px', padding: '0.55rem 0.2rem', fontSize: '0.74rem', justifyContent: 'center' }}
-                  onClick={() => handleNavigate(selected)}
-                  disabled={isLocating}
-                >
-                  {isLocating ? (
-                    <><span className={styles.spinner} /> Locating&hellip;</>
-                  ) : (
-                    <>🧭 Navigate</>
-                  )}
-                </button>
-                <button
-                  className={styles.openMapsBtn}
-                  style={{ flex: 1, minWidth: '75px', padding: '0.55rem 0.2rem', fontSize: '0.74rem', justifyContent: 'center' }}
-                  onClick={() => openInGoogleMaps(selected)}
-                >
-                  📍 Open in Maps
-                </button>
-              </div>
-            )}
-
             {/* If routing preview exists (Show stats, status and start controls) */}
             {(navInfo || locError) && (
               <div style={{ marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
@@ -733,18 +730,6 @@ export default function CampusMap() {
 
                     {/* Action buttons */}
                     <div style={{ display: 'flex', gap: '0.4rem', marginTop: '0.6rem', flexWrap: 'wrap' }}>
-                      <button
-                        className={styles.openMapsBtn}
-                        style={{ flex: 1, minWidth: '70px', padding: '0.55rem 0.2rem', fontSize: '0.74rem', background: 'linear-gradient(135deg, #a78bfa, #7c3aed)', color: '#fff', justifyContent: 'center' }}
-                        onClick={() => {
-                          stopWatch();
-                          setNavInfo(null);
-                          setLocError(null);
-                          setMapSrc(buildMapUrl(selected.mapQuery, selected.zoom));
-                        }}
-                      >
-                        👁️ Overview
-                      </button>
                       <button
                         className={styles.turnByTurnBtn}
                         style={{

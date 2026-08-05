@@ -720,4 +720,42 @@
     font-size: 0.78rem;
     border-radius: 6px;
   }
+
+  .mobileTopActionBar {
+    z-index: 100;
+    background: rgba(10, 18, 34, 0.98);
+    border-bottom: 1.5px solid rgba(64, 134, 255, 0.25);
+    padding: 0.5rem 0.8rem;
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .mobileActionBtn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+    padding: 0.5rem 0.4rem;
+    font-size: 0.76rem;
+    font-weight: 600;
+    border-radius: 6px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.05);
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: var(--font);
+    white-space: nowrap;
+  }
+
+  .mobileActionBtn:active {
+    transform: scale(0.96);
+    background: rgba(255,255,255,0.1);
+  }
 }
