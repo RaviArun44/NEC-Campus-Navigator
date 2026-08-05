@@ -674,10 +674,10 @@ export default function CampusMap() {
             className={styles.mobileBottomPanel}
             animate={{
               height: sheetExpanded === 'collapsed' 
-                ? '25dvh' 
+                ? 'clamp(190px, 34vh, 260px)' 
                 : sheetExpanded === 'half' 
-                ? '50dvh' 
-                : '82dvh'
+                ? '58vh' 
+                : '85vh'
             }}
             transition={{ type: 'spring', damping: 28, stiffness: 240 }}
             drag="y"
