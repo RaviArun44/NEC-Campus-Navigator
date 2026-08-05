@@ -216,6 +216,7 @@ export default function CampusMap() {
   const [mapSrc, setMapSrc]     = useState(buildMapUrl(buildings[0].mapQuery, buildings[0].zoom));
   const [filter, setFilter]     = useState('All');
   const [search, setSearch]     = useState('');
+  const [sidebarCollapsedMobile, setSidebarCollapsedMobile] = useState(true);
 
   // Navigation state
   const [isLocating, setIsLocating] = useState(false);
@@ -265,6 +266,7 @@ export default function CampusMap() {
     setNavInfo(null);
     setLocError(null);
     setMapSrc(buildMapUrl(b.mapQuery, b.zoom));
+    setSidebarCollapsedMobile(true);
   }, [stopWatch]);
 
   const [navStatus, setNavStatus]   = useState('');
@@ -412,9 +414,19 @@ export default function CampusMap() {
   }
 
   return (
-    <div className={styles.page}>
-      {/* -- Sidebar (Hidden on mobile navigation to save space) -- */}
-      {!(isMobile && isNavigating) && (
+    <div className={`${styles.page} ${isMobile ? styles.mobileLayout : ''}`}>
+      {/* Mobile Floating Trigger to toggle sidebar */}
+      {isMobile && !isNavigating && (
+        <button
+          className={styles.mobileListToggle}
+          onClick={() => setSidebarCollapsedMobile(!sidebarCollapsedMobile)}
+        >
+          {sidebarCollapsedMobile ? '🔍 Search & Locations List' : '✕ Close List'}
+        </button>
+      )}
+
+      {/* -- Sidebar (Hidden on mobile if collapsed or during active navigation) -- */}
+      {(!isMobile || !sidebarCollapsedMobile) && !isNavigating && (
         <aside className={styles.sidebar}>
           <div className={styles.searchBox}>
             <span className={styles.searchIcon}>&#128269;</span>
@@ -478,22 +490,17 @@ export default function CampusMap() {
         
         {/* Compact Navigation Header on Mobile */}
         {isMobile && isNavigating && guideText && (
-          <div style={{
-            position: 'absolute', top: '10px', left: '10px', right: '10px',
-            backgroundColor: '#0f5132', color: '#fff', borderRadius: '10px',
-            padding: '12px 16px', zIndex: 99, boxShadow: '0 4px 12px rgba(0,0,0,0.3)',
-            display: 'flex', alignItems: 'center', gap: '10px'
-          }}>
-            <span style={{ fontSize: '1.4rem' }}>⬆</span>
+          <div className={styles.mobileGuideHeader}>
+            <span className={styles.mobileGuideArrow}>⬆</span>
             <div>
-              <h4 style={{ margin: 0, fontSize: '1rem', fontWeight: 'bold' }}>{guideText}</h4>
-              <p style={{ margin: 0, fontSize: '0.75rem', opacity: 0.8 }}>Walking to {selected.name}</p>
+              <h4 className={styles.mobileGuideTitle}>{guideText}</h4>
+              <p className={styles.mobileGuideSub}>Walking to {selected.name}</p>
             </div>
           </div>
         )}
 
-        {/* Info bar (Traditional Layout) */}
-        {!(isMobile && isNavigating) && (
+        {/* Info bar (Traditional Layout for Desktop / Tablet) */}
+        {(!isMobile || !isNavigating) && (
           <AnimatePresence mode="wait">
             <motion.div
               key={selected?.id}
@@ -544,15 +551,15 @@ export default function CampusMap() {
           </AnimatePresence>
         )}
 
-        {/* Navigation Info Strip */}
+        {/* Navigation Info Strip / Floating Bottom Panel */}
         <AnimatePresence>
           {(navInfo || locError) && (
             <motion.div
-              className={`${styles.navStrip} ${locError ? styles.navStripError : ''}`}
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.12 }}
+              className={`${styles.navStrip} ${locError ? styles.navStripError : ''} ${isMobile ? styles.mobileBottomPanel : ''}`}
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 50 }}
+              transition={{ duration: 0.2 }}
             >
               {locError ? (
                 <div className={styles.navError}>
@@ -565,7 +572,7 @@ export default function CampusMap() {
               ) : (
                 <div className={styles.navInfoRow}>
                   {/* Floating Guide Info banner inside layout */}
-                  {guideText && (
+                  {guideText && !isMobile && (
                     <div className={styles.navStat} style={{ background: '#10b981', padding: '4px 10px', borderRadius: '6px' }}>
                       <span className={styles.navStatValue}>{guideText}</span>
                     </div>
@@ -589,7 +596,7 @@ export default function CampusMap() {
                     </div>
                   </div>
 
-                  <div className={styles.navDivider} />
+                  {isMobile && <div className={styles.navDivider} />}
 
                   {/* Arrival display option */}
                   <div className={styles.navStat}>
@@ -601,11 +608,13 @@ export default function CampusMap() {
                   </div>
 
                   {/* Navigation Status Badge */}
-                  <div className={styles.navStat} style={{ background: '#3b82f6', padding: '4px 10px', borderRadius: '6px' }}>
-                    <span className={styles.navStatValue}>{navStatus}</span>
-                  </div>
+                  {!isMobile && (
+                    <div className={styles.navStat} style={{ background: '#3b82f6', padding: '4px 10px', borderRadius: '6px' }}>
+                      <span className={styles.navStatValue}>{navStatus}</span>
+                    </div>
+                  )}
 
-                  <div style={{ display: 'flex', gap: '0.5rem', marginLeft: 'auto' }}>
+                  <div className={styles.navActionsWrapper}>
                     <button
                       className={styles.turnByTurnBtn}
                       style={{ background: isNavigating ? '#dc3545' : '#4086ff', borderColor: isNavigating ? '#dc3545' : '#4086ff' }}
@@ -643,6 +652,23 @@ export default function CampusMap() {
               transition={{ duration: 0.35 }}
             />
           </AnimatePresence>
+
+          {/* Floating Actions on Map */}
+          {isMobile && userCoordsRef.current && (
+            <div className={styles.mapFloatingActions}>
+              <button
+                className={styles.floatingActionBtn}
+                title="Recenter Location"
+                onClick={() => {
+                  if (userCoordsRef.current) {
+                    setMapSrc(buildDirectionsUrl(userCoordsRef.current.lat, userCoordsRef.current.lng, selected.lat, selected.lng));
+                  }
+                }}
+              >
+                🎯
+              </button>
+            </div>
+          )}
 
           {/* Locating overlay */}
           <AnimatePresence>

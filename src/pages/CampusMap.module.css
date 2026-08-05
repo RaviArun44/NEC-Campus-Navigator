@@ -472,57 +472,252 @@
 @media (max-width: 768px) {
   .page {
     flex-direction: column;
-    height: auto;
-    min-height: calc(100vh - 68px);
+    height: calc(100vh - 72px);
+    overflow: hidden;
+    position: relative;
   }
 
   .sidebar {
+    position: absolute;
+    top: 50px;
+    left: 0;
+    right: 0;
+    bottom: 0;
     width: 100%;
-    max-height: 45vh;
+    height: auto;
+    max-height: calc(100vh - 122px);
+    z-index: 98;
+    background: rgba(10, 18, 34, 0.98);
+    backdrop-filter: blur(12px);
     border-right: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    border-top: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .filterRow {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 0.5rem 0.8rem;
+    gap: 0.5rem;
+  }
+
+  .filterBtn {
+    flex-shrink: 0;
+    white-space: nowrap;
   }
 
   .mapPanel {
-    height: 55vh;
-    flex: none;
+    flex: 1;
+    height: 100%;
+    width: 100%;
+    position: relative;
   }
 
   .mapFrame {
+    position: absolute;
+    inset: 0;
+    width: 100%;
     height: 100%;
-    position: relative;
+    z-index: 1;
   }
 
   .iframe {
-    position: relative;
+    width: 100%;
     height: 100%;
   }
 
-  .infoBar {
-    flex-direction: column;
-    align-items: flex-start;
+  /* Mobile floating search toggle */
+  .mobileListToggle {
+    position: absolute;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 99;
+    padding: 0.6rem 1.2rem;
+    background: linear-gradient(135deg, #1a6aff, #0040cc);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 50px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    cursor: pointer;
+    font-family: var(--font);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    white-space: nowrap;
+  }
+
+  /* Floating mobile bottom details panel */
+  .mobileBottomPanel {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    background: rgba(10, 20, 38, 0.96) !important;
+    border: 1.5px solid rgba(64, 134, 255, 0.3) !important;
+    border-radius: 16px !important;
+    padding: 0.9rem !important;
+    box-shadow: 0 12px 36px rgba(0,0,0,0.6) !important;
+    z-index: 99 !important;
+  }
+
+  .navInfoRow {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+  }
+
+  .navStat {
+    flex: 1;
+    min-width: 60px;
+    justify-content: center;
+  }
+
+  .navDivider {
+    height: 24px;
+    background: rgba(255,255,255,0.08);
+  }
+
+  .navActionsWrapper {
+    width: 100%;
+    display: flex;
     gap: 0.5rem;
+    margin-top: 0.8rem;
+  }
+
+  .turnByTurnBtn {
+    flex: 1;
+    text-align: center;
+    justify-content: center;
+    padding: 0.65rem;
+    font-size: 0.8rem;
+    border-radius: 8px;
+    margin-left: 0;
+  }
+
+  /* Compact top guide instructions banner */
+  .mobileGuideHeader {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    right: 12px;
+    background: #0d5c3a;
+    border: 1px solid rgba(255,255,255,0.15);
+    color: #fff;
+    border-radius: 12px;
+    padding: 0.75rem 1rem;
+    z-index: 99;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .mobileGuideArrow {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: var(--accent);
+  }
+
+  .mobileGuideTitle {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 700;
+  }
+
+  .mobileGuideSub {
+    margin: 0;
+    font-size: 0.72rem;
+    color: rgba(255,255,255,0.75);
+    margin-top: 0.1rem;
+  }
+
+  /* Floating action buttons on map */
+  .mapFloatingActions {
+    position: absolute;
+    right: 16px;
+    bottom: 160px;
+    z-index: 98;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .floatingActionBtn {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: #0a1222;
+    border: 1.5px solid rgba(255, 204, 0, 0.4);
+    color: #fff;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .floatingActionBtn:active {
+    transform: scale(0.9);
+  }
+
+  /* Traditional layout infobar in collapsed status */
+  .infoBar {
+    position: absolute;
+    left: 12px;
+    right: 12px;
+    bottom: 12px;
+    z-index: 97;
+    background: rgba(10, 20, 38, 0.95);
+    border: 1.5px solid rgba(255,255,255,0.08);
+    border-radius: 14px;
+    padding: 0.8rem 1rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .infoLeft {
+    gap: 0.6rem;
+  }
+
+  .infoIcon {
+    font-size: 1.4rem;
+  }
+
+  .infoName {
+    font-size: 0.95rem;
+  }
+
+  .infoDesc {
+    font-size: 0.75rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .infoActions {
     width: 100%;
-    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .infoBadge {
+    display: none;
   }
 
   .navigateBtn,
   .openMapsBtn {
     flex: 1;
-    text-align: center;
-    justify-content: center;
-  }
-
-  .navInfoRow {
-    gap: 0.8rem;
-  }
-
-  .turnByTurnBtn {
-    margin-left: 0;
-    width: 100%;
-    text-align: center;
+    padding: 0.55rem;
+    font-size: 0.78rem;
+    border-radius: 6px;
   }
 }
