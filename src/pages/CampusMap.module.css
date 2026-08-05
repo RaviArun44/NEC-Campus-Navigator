@@ -472,9 +472,11 @@
 @media (max-width: 768px) {
   .page {
     flex-direction: column;
+    height: calc(100dvh - 72px);
     height: calc(100vh - 72px);
     overflow: hidden;
     position: relative;
+    padding-bottom: env(safe-area-inset-bottom);
   }
 
   .sidebar {
@@ -485,6 +487,7 @@
     bottom: 0;
     width: 100%;
     height: auto;
+    max-height: calc(100dvh - 122px);
     max-height: calc(100vh - 122px);
     z-index: 98;
     background: rgba(10, 18, 34, 0.98);
@@ -554,13 +557,17 @@
     position: absolute;
     left: 12px;
     right: 12px;
-    bottom: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom)) !important;
+    max-height: calc(32dvh - env(safe-area-inset-bottom)) !important;
+    max-height: calc(32vh - env(safe-area-inset-bottom)) !important;
+    overflow-y: auto !important;
     background: rgba(10, 20, 38, 0.96) !important;
     border: 1.5px solid rgba(64, 134, 255, 0.3) !important;
     border-radius: 16px !important;
     padding: 0.9rem !important;
     box-shadow: 0 12px 36px rgba(0,0,0,0.6) !important;
     z-index: 99 !important;
+    box-sizing: border-box !important;
   }
 
   .navInfoRow {
