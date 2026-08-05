@@ -1,0 +1,82 @@
+.hero {
+  margin: 3rem auto;
+  text-align: center;
+  max-width: 800px;
+}
+
+.heroTitle {
+  font-size: 2.5rem;
+  color: var(--accent);
+  margin-bottom: 1rem;
+}
+
+.heroSubtitle {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+}
+
+.content {
+  max-width: 900px;
+  margin: 0 auto 3rem;
+}
+
+.sectionTitle {
+  color: var(--accent);
+  font-size: 1.8rem;
+  margin: 2rem 0 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.sectionTitle:first-child {
+  margin-top: 0;
+}
+
+.desc {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.card h3 {
+  color: white;
+  margin-bottom: 1rem;
+  font-size: 1.2rem;
+}
+
+.list {
+  list-style: none;
+}
+
+.list li {
+  padding-left: 1.5rem;
+  position: relative;
+  margin-bottom: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.list li::before {
+  content: "▹";
+  color: var(--accent);
+  position: absolute;
+  left: 0;
+  font-weight: bold;
+}
+
+.docList {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 0.5rem;
+}
+
+.docList li::before {
+  content: "✔";
+  color: var(--success);
+}

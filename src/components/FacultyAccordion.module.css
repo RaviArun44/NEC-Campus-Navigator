@@ -1,0 +1,65 @@
+.section {
+  max-width: 700px;
+  margin: 3rem auto;
+  padding: 0 1.5rem;
+}
+
+.list {
+  list-style: none;
+}
+
+.item {
+  margin-bottom: 0.8rem;
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.header {
+  width: 100%;
+  padding: 1rem 1.2rem;
+  background: rgba(255, 255, 255, 0.06);
+  border: none;
+  color: white;
+  text-align: left;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: all 0.25s ease;
+}
+
+.header:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.header.active {
+  background: rgba(255, 204, 0, 0.12);
+  color: #ffcc00;
+}
+
+.chevron {
+  font-size: 0.75rem;
+  opacity: 0.6;
+}
+
+.content {
+  overflow: hidden;
+}
+
+.inner {
+  padding: 1rem 1.2rem;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.inner p {
+  margin: 0.4rem 0;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.inner a {
+  color: #ffcc00;
+}

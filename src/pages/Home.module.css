@@ -1,0 +1,92 @@
+.hero {
+  margin: 3rem auto;
+  text-align: center;
+  max-width: 900px;
+}
+
+.heroTitle {
+  font-size: 2.5rem;
+  color: var(--accent);
+  margin-bottom: 1rem;
+}
+
+.heroSubtitle {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+.heroEst {
+  font-size: 1rem;
+  color: var(--text-muted);
+  font-style: italic;
+  margin-bottom: 2rem;
+}
+
+.heroActions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.coeInfo {
+  margin: 3rem auto;
+  max-width: 1000px;
+}
+
+.coeTitle {
+  color: var(--accent);
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
+
+.subHeading {
+  color: var(--text-secondary);
+  font-size: 1.3rem;
+  margin: 1.5rem 0 0.8rem;
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 0.4rem;
+}
+
+.list {
+  list-style: none;
+  padding-left: 0;
+}
+
+.list li {
+  margin: 0.6rem 0;
+  padding-left: 1.6rem;
+  position: relative;
+  color: var(--text-secondary);
+}
+
+.list li::before {
+  content: "✔";
+  color: var(--success);
+  position: absolute;
+  left: 0;
+}
+
+.coeLinks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 1.2rem 0;
+}
+
+.coeNote {
+  font-style: italic;
+  margin-top: 1.5rem;
+  color: var(--text-muted);
+}
+
+.coeNote a {
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .heroTitle {
+    font-size: 1.8rem;
+  }
+}
