@@ -765,4 +765,27 @@
     transform: scale(0.96);
     background: rgba(255,255,255,0.1);
   }
+
+  .dragHandleWrapper {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 0.1rem 0 0.6rem;
+    cursor: grab;
+    touch-action: none;
+  }
+
+  .dragHandleBar {
+    width: 36px;
+    height: 4.5px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.35);
+  }
+
+  .mobileBottomContent {
+    overflow-y: auto;
+    max-height: calc(100% - 18px);
+    padding-bottom: 1rem;
+    box-sizing: border-box;
+  }
 }

@@ -225,6 +225,7 @@ export default function CampusMap() {
   const [isNavigating, setIsNavigating] = useState(false);
   const [guideText, setGuideText]   = useState('');
   const [isMobile, setIsMobile]     = useState(window.innerWidth <= 768);
+  const [sheetExpanded, setSheetExpanded] = useState('collapsed'); // 'collapsed', 'half', 'full'
 
   // Real-time GPS watch refs
   const watchIdRef    = useRef(null);
@@ -669,95 +670,135 @@ export default function CampusMap() {
 
         {/* Mobile Unified Bottom Sheet */}
         {isMobile && selected && (
-          <div className={styles.mobileBottomPanel}>
-            {/* Header info */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem', marginBottom: '0.4rem' }}>
-              <div>
-                <h3 style={{ margin: 0, fontSize: '0.92rem', color: '#fff', fontWeight: 700 }}>
-                  {selected.icon} {selected.name}
-                </h3>
-                <p style={{ margin: '0.1rem 0 0', fontSize: '0.72rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.2 }}>
-                  {selected.description}
-                </p>
-              </div>
-              <span
-                style={{
-                  background: categoryColors[selected.category] + '22',
-                  color: categoryColors[selected.category],
-                  border: `1.5px solid ${categoryColors[selected.category]}55`,
-                  padding: '2px 8px',
-                  borderRadius: '50px',
-                  fontSize: '0.65rem',
-                  fontWeight: 700,
-                  textTransform: 'uppercase',
-                  whiteSpace: 'nowrap'
-                }}
-              >
-                {selected.category}
-              </span>
+          <motion.div
+            className={styles.mobileBottomPanel}
+            animate={{
+              height: sheetExpanded === 'collapsed' 
+                ? '25dvh' 
+                : sheetExpanded === 'half' 
+                ? '50dvh' 
+                : '82dvh'
+            }}
+            transition={{ type: 'spring', damping: 28, stiffness: 240 }}
+            drag="y"
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={0.15}
+            onDragEnd={(event, info) => {
+              // If dragged up (negative y movement)
+              if (info.offset.y < -40) {
+                if (sheetExpanded === 'collapsed') setSheetExpanded('half');
+                else if (sheetExpanded === 'half') setSheetExpanded('full');
+              } 
+              // If dragged down (positive y movement)
+              else if (info.offset.y > 40) {
+                if (sheetExpanded === 'full') setSheetExpanded('half');
+                else if (sheetExpanded === 'half') setSheetExpanded('collapsed');
+              }
+            }}
+          >
+            {/* Top Drag Indicator Handle */}
+            <div 
+              className={styles.dragHandleWrapper}
+              onClick={() => {
+                if (sheetExpanded === 'collapsed') setSheetExpanded('half');
+                else if (sheetExpanded === 'half') setSheetExpanded('full');
+                else setSheetExpanded('collapsed');
+              }}
+            >
+              <div className={styles.dragHandleBar} />
             </div>
 
-            {/* If routing preview exists (Show stats, status and start controls) */}
-            {(navInfo || locError) && (
-              <div style={{ marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
-                {locError ? (
-                  <div className={styles.navError}>
-                    <span>&#9888;&#65039; {locError}</span>
-                    <button className={styles.retryBtn} onClick={() => { setLocError(null); handleNavigate(selected); }}>
-                      Retry
-                    </button>
-                  </div>
-                ) : (
-                  <div>
-                    {/* Stats bar */}
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.2rem', marginBottom: '0.5rem' }}>
-                      <div className={styles.navStat}>
-                        <span className={styles.navStatValue} style={{ fontSize: '0.85rem' }}>📏 {navInfo?.distance}</span>
-                      </div>
-                      <div className={styles.navDivider} style={{ height: '14px' }} />
-                      <div className={styles.navStat}>
-                        <span className={styles.navStatValue} style={{ fontSize: '0.85rem' }}>⏱ {navInfo?.eta}</span>
-                      </div>
-                      <div className={styles.navDivider} style={{ height: '14px' }} />
-                      <div className={styles.navStat}>
-                        <span className={styles.navStatValue} style={{ fontSize: '0.85rem' }}>🕒 {navInfo?.arrival}</span>
-                      </div>
-                      <div className={styles.navDivider} style={{ height: '14px' }} />
-                      <div style={{ fontSize: '0.72rem', color: '#ffcc00', fontWeight: 'bold' }}>
-                        {navStatus}
-                      </div>
-                    </div>
-
-                    {/* Action buttons */}
-                    <div style={{ display: 'flex', gap: '0.4rem', marginTop: '0.6rem', flexWrap: 'wrap' }}>
-                      <button
-                        className={styles.turnByTurnBtn}
-                        style={{
-                          flex: 1.5,
-                          minWidth: '100px',
-                          background: isNavigating ? '#dc3545' : '#4086ff',
-                          borderColor: isNavigating ? '#dc3545' : '#4086ff',
-                          padding: '0.55rem 0.2rem',
-                          fontSize: '0.74rem',
-                          justifyContent: 'center'
-                        }}
-                        onClick={() => startActiveNavigation(selected)}
-                      >
-                        {isNavigating ? '🛑 Stop' : '🧭 Start'}
-                      </button>
-                      <button
-                        className={styles.turnByTurnBtn}
-                        style={{ flex: 1, minWidth: '85px', padding: '0.55rem 0.2rem', fontSize: '0.74rem', justifyContent: 'center' }}
-                        onClick={() => openDirectionsInMaps(selected)}
-                      >
-                        🗺️ Turn-by-Turn
-                      </button>
-                    </div>
-                  </div>
-                )}
+            {/* Scrollable Bottom Sheet Content */}
+            <div className={styles.mobileBottomContent}>
+              {/* Header info */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem', marginBottom: '0.4rem' }}>
+                <div>
+                  <h3 style={{ margin: 0, fontSize: '0.92rem', color: '#fff', fontWeight: 700 }}>
+                    {selected.icon} {selected.name}
+                  </h3>
+                  <p style={{ margin: '0.1rem 0 0', fontSize: '0.72rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.2 }}>
+                    {selected.description}
+                  </p>
+                </div>
+                <span
+                  style={{
+                    background: categoryColors[selected.category] + '22',
+                    color: categoryColors[selected.category],
+                    border: `1.5px solid ${categoryColors[selected.category]}55`,
+                    padding: '2px 8px',
+                    borderRadius: '50px',
+                    fontSize: '0.65rem',
+                    fontWeight: 700,
+                    textTransform: 'uppercase',
+                    whiteSpace: 'nowrap'
+                  }}
+                >
+                  {selected.category}
+                </span>
               </div>
-            )}
-          </div>
+
+              {/* If routing preview exists (Show stats, status and start controls) */}
+              {(navInfo || locError) && (
+                <div style={{ marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+                  {locError ? (
+                    <div className={styles.navError}>
+                      <span>&#9888;&#65039; {locError}</span>
+                      <button className={styles.retryBtn} onClick={() => { setLocError(null); handleNavigate(selected); }}>
+                        Retry
+                      </button>
+                    </div>
+                  ) : (
+                    <div>
+                      {/* Stats bar */}
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.2rem', marginBottom: '0.5rem' }}>
+                        <div className={styles.navStat}>
+                          <span className={styles.navStatValue} style={{ fontSize: '0.85rem' }}>📏 {navInfo?.distance}</span>
+                        </div>
+                        <div className={styles.navDivider} style={{ height: '14px' }} />
+                        <div className={styles.navStat}>
+                          <span className={styles.navStatValue} style={{ fontSize: '0.85rem' }}>⏱ {navInfo?.eta}</span>
+                        </div>
+                        <div className={styles.navDivider} style={{ height: '14px' }} />
+                        <div className={styles.navStat}>
+                          <span className={styles.navStatValue} style={{ fontSize: '0.85rem' }}>🕒 {navInfo?.arrival}</span>
+                        </div>
+                        <div className={styles.navDivider} style={{ height: '14px' }} />
+                        <div style={{ fontSize: '0.72rem', color: '#ffcc00', fontWeight: 'bold' }}>
+                          {navStatus}
+                        </div>
+                      </div>
+
+                      {/* Action buttons */}
+                      <div style={{ display: 'flex', gap: '0.4rem', marginTop: '0.6rem', flexWrap: 'wrap' }}>
+                        <button
+                          className={styles.turnByTurnBtn}
+                          style={{
+                            flex: 1.5,
+                            minWidth: '100px',
+                            background: isNavigating ? '#dc3545' : '#4086ff',
+                            borderColor: isNavigating ? '#dc3545' : '#4086ff',
+                            padding: '0.55rem 0.2rem',
+                            fontSize: '0.74rem',
+                            justifyContent: 'center'
+                          }}
+                          onClick={() => startActiveNavigation(selected)}
+                        >
+                          {isNavigating ? '🛑 Stop' : '🧭 Start'}
+                        </button>
+                        <button
+                          className={styles.turnByTurnBtn}
+                          style={{ flex: 1, minWidth: '85px', padding: '0.55rem 0.2rem', fontSize: '0.74rem', justifyContent: 'center' }}
+                          onClick={() => openDirectionsInMaps(selected)}
+                        >
+                          🗺️ Turn-by-Turn
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          </motion.div>
         )}
 
         {/* Google Maps iframe */}
