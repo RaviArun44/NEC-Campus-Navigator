@@ -499,40 +499,176 @@ export default function CampusMap() {
           </div>
         )}
 
-        {/* Info bar (Traditional Layout for Desktop / Tablet) */}
-        {(!isMobile || !isNavigating) && (
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={selected?.id}
-              className={styles.infoBar}
-              style={{ borderColor: categoryColors[selected?.category] + '55' }}
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 10 }}
-              transition={{ duration: 0.2 }}
-            >
-              <div className={styles.infoLeft}>
-                <span className={styles.infoIcon}>{selected?.icon}</span>
-                <div>
-                  <h2 className={styles.infoName}>{selected?.name}</h2>
-                  <p className={styles.infoDesc}>{selected?.description}</p>
+        {/* Desktop Layout Details Panel */}
+        {!isMobile && (
+          <>
+            {/* Info bar (Traditional Layout for Desktop / Tablet) */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={selected?.id}
+                className={styles.infoBar}
+                style={{ borderColor: categoryColors[selected?.category] + '55' }}
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                transition={{ duration: 0.2 }}
+              >
+                <div className={styles.infoLeft}>
+                  <span className={styles.infoIcon}>{selected?.icon}</span>
+                  <div>
+                    <h2 className={styles.infoName}>{selected?.name}</h2>
+                    <p className={styles.infoDesc}>{selected?.description}</p>
+                  </div>
                 </div>
-              </div>
 
-              <div className={styles.infoActions}>
-                <span
-                  className={styles.infoBadge}
-                  style={{
-                    background: categoryColors[selected?.category] + '22',
-                    color: categoryColors[selected?.category],
-                    border: `1px solid ${categoryColors[selected?.category]}44`,
-                  }}
+                <div className={styles.infoActions}>
+                  <span
+                    className={styles.infoBadge}
+                    style={{
+                      background: categoryColors[selected?.category] + '22',
+                      color: categoryColors[selected?.category],
+                      border: `1px solid ${categoryColors[selected?.category]}44`,
+                    }}
+                  >
+                    {selected?.category}
+                  </span>
+
+                  <button
+                    className={`${styles.navigateBtn} ${isLocating ? styles.locating : ''}`}
+                    onClick={() => handleNavigate(selected)}
+                    disabled={isLocating}
+                  >
+                    {isLocating ? (
+                      <><span className={styles.spinner} /> Locating&hellip;</>
+                    ) : (
+                      <>&#129517; Navigate</>
+                    )}
+                  </button>
+
+                  <button className={styles.openMapsBtn} onClick={() => openInGoogleMaps(selected)}>
+                    &#128205; Open in Maps
+                  </button>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Desktop Navigation Info Strip */}
+            <AnimatePresence>
+              {(navInfo || locError) && (
+                <motion.div
+                  className={`${styles.navStrip} ${locError ? styles.navStripError : ''}`}
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: 'auto' }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.12 }}
                 >
-                  {selected?.category}
-                </span>
+                  {locError ? (
+                    <div className={styles.navError}>
+                      <span>&#9888;&#65039;</span>
+                      <span>{locError}</span>
+                      <button className={styles.retryBtn} onClick={() => { setLocError(null); handleNavigate(selected); }}>
+                        Retry
+                      </button>
+                    </div>
+                  ) : (
+                    <div className={styles.navInfoRow}>
+                      {guideText && (
+                        <div className={styles.navStat} style={{ background: '#10b981', padding: '4px 10px', borderRadius: '6px' }}>
+                          <span className={styles.navStatValue}>{guideText}</span>
+                        </div>
+                      )}
 
+                      <div className={styles.navStat}>
+                        <span className={styles.navStatIcon}>&#128207;</span>
+                        <div>
+                          <span className={styles.navStatValue}>{navInfo?.distance}</span>
+                          <span className={styles.navStatLabel}>Distance</span>
+                        </div>
+                      </div>
+
+                      <div className={styles.navDivider} />
+
+                      <div className={styles.navStat}>
+                        <span className={styles.navStatIcon}>&#9201;&#65039;</span>
+                        <div>
+                          <span className={styles.navStatValue}>{navInfo?.eta}</span>
+                          <span className={styles.navStatLabel}>Walk Time</span>
+                        </div>
+                      </div>
+
+                      <div className={styles.navDivider} />
+
+                      <div className={styles.navStat}>
+                        <span className={styles.navStatIcon}>🕒</span>
+                        <div>
+                          <span className={styles.navStatValue}>{navInfo?.arrival}</span>
+                          <span className={styles.navStatLabel}>Arrival</span>
+                        </div>
+                      </div>
+
+                      <div className={styles.navStat} style={{ background: '#3b82f6', padding: '4px 10px', borderRadius: '6px' }}>
+                        <span className={styles.navStatValue}>{navStatus}</span>
+                      </div>
+
+                      <div style={{ display: 'flex', gap: '0.5rem', marginLeft: 'auto' }}>
+                        <button
+                          className={styles.turnByTurnBtn}
+                          style={{ background: isNavigating ? '#dc3545' : '#4086ff', borderColor: isNavigating ? '#dc3545' : '#4086ff' }}
+                          onClick={() => startActiveNavigation(selected)}
+                        >
+                          {isNavigating ? '🛑 Stop Navigation' : '🧭 Start Navigation'}
+                        </button>
+                        <button
+                          className={styles.turnByTurnBtn}
+                          onClick={() => openDirectionsInMaps(selected)}
+                        >
+                          &#128506;&#65039; Turn-by-Turn
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </>
+        )}
+
+        {/* Mobile Unified Bottom Sheet */}
+        {isMobile && selected && (
+          <div className={styles.mobileBottomPanel}>
+            {/* Header info */}
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '0.5rem', marginBottom: '0.4rem' }}>
+              <div>
+                <h3 style={{ margin: 0, fontSize: '0.92rem', color: '#fff', fontWeight: 700 }}>
+                  {selected.icon} {selected.name}
+                </h3>
+                <p style={{ margin: '0.1rem 0 0', fontSize: '0.72rem', color: 'rgba(255,255,255,0.6)', lineHeight: 1.2 }}>
+                  {selected.description}
+                </p>
+              </div>
+              <span
+                style={{
+                  background: categoryColors[selected.category] + '22',
+                  color: categoryColors[selected.category],
+                  border: `1.5px solid ${categoryColors[selected.category]}55`,
+                  padding: '2px 8px',
+                  borderRadius: '50px',
+                  fontSize: '0.65rem',
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  whiteSpace: 'nowrap'
+                }}
+              >
+                {selected.category}
+              </span>
+            </div>
+
+            {/* If routing hasn't been done yet (Show Navigate and Open in Maps only) */}
+            {!navInfo && !locError && (
+              <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.6rem' }}>
                 <button
-                  className={`${styles.navigateBtn} ${isLocating ? styles.locating : ''}`}
+                  className={styles.navigateBtn}
+                  style={{ flex: 1, padding: '0.55rem', fontSize: '0.78rem', justifyContent: 'center' }}
                   onClick={() => handleNavigate(selected)}
                   disabled={isLocating}
                 >
@@ -542,98 +678,77 @@ export default function CampusMap() {
                     <>&#129517; Navigate</>
                   )}
                 </button>
-
-                <button className={styles.openMapsBtn} onClick={() => openInGoogleMaps(selected)}>
+                <button
+                  className={styles.openMapsBtn}
+                  style={{ flex: 1, padding: '0.55rem', fontSize: '0.78rem', justifyContent: 'center' }}
+                  onClick={() => openInGoogleMaps(selected)}
+                >
                   &#128205; Open in Maps
                 </button>
               </div>
-            </motion.div>
-          </AnimatePresence>
+            )}
+
+            {/* If routing preview exists (Show stats, status and start controls) */}
+            {(navInfo || locError) && (
+              <div style={{ marginTop: '0.5rem', paddingTop: '0.5rem', borderTop: '1px solid rgba(255,255,255,0.08)' }}>
+                {locError ? (
+                  <div className={styles.navError}>
+                    <span>&#9888;&#65039; {locError}</span>
+                    <button className={styles.retryBtn} onClick={() => { setLocError(null); handleNavigate(selected); }}>
+                      Retry
+                    </button>
+                  </div>
+                ) : (
+                  <div>
+                    {/* Stats bar */}
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '0.2rem', marginBottom: '0.5rem' }}>
+                      <div className={styles.navStat}>
+                        <span className={styles.navStatValue} style={{ fontSize: '0.85rem' }}>📏 {navInfo?.distance}</span>
+                      </div>
+                      <div className={styles.navDivider} style={{ height: '14px' }} />
+                      <div className={styles.navStat}>
+                        <span className={styles.navStatValue} style={{ fontSize: '0.85rem' }}>⏱ {navInfo?.eta}</span>
+                      </div>
+                      <div className={styles.navDivider} style={{ height: '14px' }} />
+                      <div className={styles.navStat}>
+                        <span className={styles.navStatValue} style={{ fontSize: '0.85rem' }}>🕒 {navInfo?.arrival}</span>
+                      </div>
+                      <div className={styles.navDivider} style={{ height: '14px' }} />
+                      <div style={{ fontSize: '0.72rem', color: '#ffcc00', fontWeight: 'bold' }}>
+                        {navStatus}
+                      </div>
+                    </div>
+
+                    {/* Action buttons */}
+                    <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.6rem' }}>
+                      <button
+                        className={styles.turnByTurnBtn}
+                        style={{
+                          flex: 1.2,
+                          background: isNavigating ? '#dc3545' : '#4086ff',
+                          borderColor: isNavigating ? '#dc3545' : '#4086ff',
+                          padding: '0.6rem',
+                          fontSize: '0.78rem',
+                          justifyContent: 'center'
+                        }}
+                        onClick={() => startActiveNavigation(selected)}
+                      >
+                        {isNavigating ? '🛑 Stop Navigation' : '🧭 Start Navigation'}
+                      </button>
+                      <button
+                        className={styles.turnByTurnBtn}
+                        style={{ flex: 1, padding: '0.6rem', fontSize: '0.78rem', justifyContent: 'center' }}
+                        onClick={() => openDirectionsInMaps(selected)}
+                      >
+                        &#128506;&#65039; Turn-by-Turn
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         )}
-
-        {/* Navigation Info Strip / Floating Bottom Panel */}
-        <AnimatePresence>
-          {(navInfo || locError) && (
-            <motion.div
-              className={`${styles.navStrip} ${locError ? styles.navStripError : ''} ${isMobile ? styles.mobileBottomPanel : ''}`}
-              initial={{ opacity: 0, y: 50 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 50 }}
-              transition={{ duration: 0.2 }}
-            >
-              {locError ? (
-                <div className={styles.navError}>
-                  <span>&#9888;&#65039;</span>
-                  <span>{locError}</span>
-                  <button className={styles.retryBtn} onClick={() => { setLocError(null); handleNavigate(selected); }}>
-                    Retry
-                  </button>
-                </div>
-              ) : (
-                <div className={styles.navInfoRow}>
-                  {/* Floating Guide Info banner inside layout */}
-                  {guideText && !isMobile && (
-                    <div className={styles.navStat} style={{ background: '#10b981', padding: '4px 10px', borderRadius: '6px' }}>
-                      <span className={styles.navStatValue}>{guideText}</span>
-                    </div>
-                  )}
-
-                  <div className={styles.navStat}>
-                    <span className={styles.navStatIcon}>&#128207;</span>
-                    <div>
-                      <span className={styles.navStatValue}>{navInfo?.distance}</span>
-                      <span className={styles.navStatLabel}>Distance</span>
-                    </div>
-                  </div>
-
-                  <div className={styles.navDivider} />
-
-                  <div className={styles.navStat}>
-                    <span className={styles.navStatIcon}>&#9201;&#65039;</span>
-                    <div>
-                      <span className={styles.navStatValue}>{navInfo?.eta}</span>
-                      <span className={styles.navStatLabel}>Walk Time</span>
-                    </div>
-                  </div>
-
-                  {isMobile && <div className={styles.navDivider} />}
-
-                  {/* Arrival display option */}
-                  <div className={styles.navStat}>
-                    <span className={styles.navStatIcon}>🕒</span>
-                    <div>
-                      <span className={styles.navStatValue}>{navInfo?.arrival}</span>
-                      <span className={styles.navStatLabel}>Arrival</span>
-                    </div>
-                  </div>
-
-                  {/* Navigation Status Badge */}
-                  {!isMobile && (
-                    <div className={styles.navStat} style={{ background: '#3b82f6', padding: '4px 10px', borderRadius: '6px' }}>
-                      <span className={styles.navStatValue}>{navStatus}</span>
-                    </div>
-                  )}
-
-                  <div className={styles.navActionsWrapper}>
-                    <button
-                      className={styles.turnByTurnBtn}
-                      style={{ background: isNavigating ? '#dc3545' : '#4086ff', borderColor: isNavigating ? '#dc3545' : '#4086ff' }}
-                      onClick={() => startActiveNavigation(selected)}
-                    >
-                      {isNavigating ? '🛑 Stop Navigation' : '🧭 Start Navigation'}
-                    </button>
-                    <button
-                      className={styles.turnByTurnBtn}
-                      onClick={() => openDirectionsInMaps(selected)}
-                    >
-                      &#128506;&#65039; Turn-by-Turn
-                    </button>
-                  </div>
-                </div>
-              )}
-            </motion.div>
-          )}
-        </AnimatePresence>
 
         {/* Google Maps iframe */}
         <div className={styles.mapFrame}>
