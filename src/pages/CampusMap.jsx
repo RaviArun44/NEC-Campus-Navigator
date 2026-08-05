@@ -663,27 +663,39 @@ export default function CampusMap() {
               </span>
             </div>
 
-            {/* If routing hasn't been done yet (Show Navigate and Open in Maps only) */}
+            {/* If routing hasn't been done yet (Show Overview, Navigate, and Open in Maps) */}
             {!navInfo && !locError && (
-              <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.6rem' }}>
+              <div style={{ display: 'flex', gap: '0.4rem', marginTop: '0.6rem', flexWrap: 'wrap' }}>
+                <button
+                  className={styles.openMapsBtn}
+                  style={{ flex: 1, minWidth: '75px', padding: '0.55rem 0.2rem', fontSize: '0.74rem', background: 'linear-gradient(135deg, #a78bfa, #7c3aed)', color: '#fff', justifyContent: 'center' }}
+                  onClick={() => {
+                    stopWatch();
+                    setNavInfo(null);
+                    setLocError(null);
+                    setMapSrc(buildMapUrl(selected.mapQuery, selected.zoom));
+                  }}
+                >
+                  👁️ Overview
+                </button>
                 <button
                   className={styles.navigateBtn}
-                  style={{ flex: 1, padding: '0.55rem', fontSize: '0.78rem', justifyContent: 'center' }}
+                  style={{ flex: 1, minWidth: '75px', padding: '0.55rem 0.2rem', fontSize: '0.74rem', justifyContent: 'center' }}
                   onClick={() => handleNavigate(selected)}
                   disabled={isLocating}
                 >
                   {isLocating ? (
                     <><span className={styles.spinner} /> Locating&hellip;</>
                   ) : (
-                    <>&#129517; Navigate</>
+                    <>🧭 Navigate</>
                   )}
                 </button>
                 <button
                   className={styles.openMapsBtn}
-                  style={{ flex: 1, padding: '0.55rem', fontSize: '0.78rem', justifyContent: 'center' }}
+                  style={{ flex: 1, minWidth: '75px', padding: '0.55rem 0.2rem', fontSize: '0.74rem', justifyContent: 'center' }}
                   onClick={() => openInGoogleMaps(selected)}
                 >
-                  &#128205; Open in Maps
+                  📍 Open in Maps
                 </button>
               </div>
             )}
@@ -720,27 +732,40 @@ export default function CampusMap() {
                     </div>
 
                     {/* Action buttons */}
-                    <div style={{ display: 'flex', gap: '0.5rem', marginTop: '0.6rem' }}>
+                    <div style={{ display: 'flex', gap: '0.4rem', marginTop: '0.6rem', flexWrap: 'wrap' }}>
+                      <button
+                        className={styles.openMapsBtn}
+                        style={{ flex: 1, minWidth: '70px', padding: '0.55rem 0.2rem', fontSize: '0.74rem', background: 'linear-gradient(135deg, #a78bfa, #7c3aed)', color: '#fff', justifyContent: 'center' }}
+                        onClick={() => {
+                          stopWatch();
+                          setNavInfo(null);
+                          setLocError(null);
+                          setMapSrc(buildMapUrl(selected.mapQuery, selected.zoom));
+                        }}
+                      >
+                        👁️ Overview
+                      </button>
                       <button
                         className={styles.turnByTurnBtn}
                         style={{
-                          flex: 1.2,
+                          flex: 1.5,
+                          minWidth: '100px',
                           background: isNavigating ? '#dc3545' : '#4086ff',
                           borderColor: isNavigating ? '#dc3545' : '#4086ff',
-                          padding: '0.6rem',
-                          fontSize: '0.78rem',
+                          padding: '0.55rem 0.2rem',
+                          fontSize: '0.74rem',
                           justifyContent: 'center'
                         }}
                         onClick={() => startActiveNavigation(selected)}
                       >
-                        {isNavigating ? '🛑 Stop Navigation' : '🧭 Start Navigation'}
+                        {isNavigating ? '🛑 Stop' : '🧭 Start'}
                       </button>
                       <button
                         className={styles.turnByTurnBtn}
-                        style={{ flex: 1, padding: '0.6rem', fontSize: '0.78rem', justifyContent: 'center' }}
+                        style={{ flex: 1, minWidth: '85px', padding: '0.55rem 0.2rem', fontSize: '0.74rem', justifyContent: 'center' }}
                         onClick={() => openDirectionsInMaps(selected)}
                       >
-                        &#128506;&#65039; Turn-by-Turn
+                        🗺️ Turn-by-Turn
                       </button>
                     </div>
                   </div>
