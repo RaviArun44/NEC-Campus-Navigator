@@ -58,7 +58,8 @@ const buildings = [
     icon: '\uD83E\uDD16', category: 'Academic',
     mapQuery: 'National+Engineering+College+Kovilpatti',
     lat: 9.146497, lng: 77.830864, zoom: 18,
-    description: 'Artificial Intelligence and Data Science.',
+    description: 'Department of Artificial Intelligence & Data Science, National Engineering College.',
+    aliases: ['Department of EIE', 'EIE', 'AI & DS', 'Artificial Intelligence & Data Science', 'AIDS Department']
   },
   {
     id: 'ece', name: 'ECE Department', shortName: 'ECE',
@@ -257,7 +258,10 @@ export default function CampusMap() {
 
   const filtered = buildings.filter((b) => {
     const matchCat    = filter === 'All' || b.category === filter;
-    const matchSearch = b.name.toLowerCase().includes(search.toLowerCase());
+    const searchLower = search.toLowerCase();
+    const matchSearch = b.name.toLowerCase().includes(searchLower) ||
+                        b.shortName.toLowerCase().includes(searchLower) ||
+                        (b.aliases && b.aliases.some(alias => alias.toLowerCase().includes(searchLower)));
     return matchCat && matchSearch;
   });
 

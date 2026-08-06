@@ -112,6 +112,7 @@ export const buildings = [
     floor: 'Ground + 1 Floor',
     description: 'Artificial Intelligence and Data Science Department',
     mapsUrl: 'https://maps.google.com/?q=NEC+AIDS+Department+Kovilpatti',
+    aliases: ['Department of EIE', 'EIE', 'AI & DS', 'Artificial Intelligence & Data Science', 'AIDS Department']
   },
   {
     id: 'library',
