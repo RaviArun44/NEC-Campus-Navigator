@@ -155,4 +155,28 @@ export const buildings = [
     lat: 9.150541, lng: 77.833234, zoom: 18,
     description: 'Girls Hostel Block - NEC Kovilpatti.',
   },
+  {
+    id: 'power-station', name: 'Power Station', shortName: 'Power Station',
+    icon: '⚡', category: 'Facility',
+    mapQuery: 'National+Engineering+College+Kovilpatti',
+    lat: 9.147838, lng: 77.835730, zoom: 18,
+    description: 'Campus Power Distribution Station.',
+    aliases: ['Power Station', 'Power', 'Station']
+  },
+  {
+    id: 'sewage-plant', name: 'Sewage Water Treatment Plant', shortName: 'Sewage Plant',
+    icon: '💧', category: 'Facility',
+    mapQuery: 'National+Engineering+College+Kovilpatti',
+    lat: 9.149115, lng: 77.828377, zoom: 18,
+    description: 'Campus Sewage Water Treatment Plant.',
+    aliases: ['Sewage Water Treatment Plant', 'Sewage', 'Water Treatment', 'Treatment Plant']
+  },
+  {
+    id: 'maintenance-room', name: 'Maintenance Room', shortName: 'Maintenance Room',
+    icon: '🔧', category: 'Facility',
+    mapQuery: 'National+Engineering+College+Kovilpatti',
+    lat: 9.149094, lng: 77.833117, zoom: 18,
+    description: 'Campus Maintenance Room.',
+    aliases: ['Maintenance Room', 'Maintenance']
+  },
 ];
