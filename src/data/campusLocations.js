@@ -179,4 +179,12 @@ export const buildings = [
     description: 'Campus Maintenance Room.',
     aliases: ['Maintenance Room', 'Maintenance']
   },
+  {
+    id: 'delegates-residency', name: 'Delegates & Residency', shortName: 'Delegates & Residency',
+    icon: '🏢', category: 'Facility',
+    mapQuery: 'National+Engineering+College+Kovilpatti',
+    lat: 9.148229, lng: 77.827337, zoom: 18,
+    description: 'Delegates & Residency building at National Engineering College.',
+    aliases: ['Delegates', 'Residency', 'Delegates & Residency', 'Delegate Residence', 'Guest House']
+  },
 ];
