@@ -2,164 +2,8 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import styles from './CampusMap.module.css';
 
-// --- Building Data ---
-const buildings = [
-  {
-    id: 'campus', name: 'Full Campus Overview', shortName: 'Full Campus',
-    icon: '\uD83C\uDFEB', category: 'Overview',
-    mapQuery: 'National+Engineering+College+Kovilpatti',
-    lat: 9.1484, lng: 77.8312, zoom: 17,
-    description: 'Full campus overview of NEC, Kovilpatti.',
-  },
-  {
-    id: 'admin', name: 'Administrative Block', shortName: 'Admin Block',
-    icon: '\uD83C\uDFDB\uFE0F', category: 'Admin',
-    mapQuery: 'National+Engineering+College+Kovilpatti',
-    lat: 9.149011, lng: 77.831993, zoom: 18,
-    description: 'Principal Office, Dean Offices, Administration.',
-  },
-  {
-    id: 'principal', name: 'Principal Room', shortName: 'Principal',
-    icon: '\uD83C\uDF93', category: 'Admin',
-    mapQuery: 'National+Engineering+College+Kovilpatti',
-    lat: 9.148433, lng: 77.832515, zoom: 18,
-    description: "Principal's Office - NEC Kovilpatti.",
-  },
-  {
-    id: 'coe', name: 'COE / Autonomous Block', shortName: 'COE Office',
-    icon: '\uD83D\uDCCB', category: 'Admin',
-    mapQuery: 'National+Engineering+College+Kovilpatti',
-    lat: 9.149011, lng: 77.831993, zoom: 18,
-    description: 'Controller of Examinations - Exam registration, results, hall tickets.',
-  },
-  {
-    id: 'cse', name: 'CSE Department', shortName: 'CSE',
-    icon: '\uD83D\uDCBB', category: 'Academic',
-    mapQuery: 'National+Engineering+College+Kovilpatti',
-    lat: 9.1469, lng: 77.8323, zoom: 18,
-    description: 'Computer Science and Engineering Department.',
-  },
-  {
-    id: 'it', name: 'IT Department', shortName: 'IT',
-    icon: '\uD83C\uDF10', category: 'Academic',
-    mapQuery: 'National+Engineering+College+Kovilpatti',
-    lat: 9.1476, lng: 77.8317, zoom: 18,
-    description: 'Information Technology Department.',
-  },
-  {
-    id: 'eee', name: 'EEE Department', shortName: 'EEE',
-    icon: '\u26A1', category: 'Academic',
-    mapQuery: 'National+Engineering+College+Kovilpatti',
-    lat: 9.1465, lng: 77.8318, zoom: 18,
-    description: 'Electrical and Electronics Engineering.',
-  },
-  {
-    id: 'aids', name: 'AI & DS Department', shortName: 'AI & DS',
-    icon: '\uD83E\uDD16', category: 'Academic',
-    mapQuery: 'National+Engineering+College+Kovilpatti',
-    lat: 9.146497, lng: 77.830864, zoom: 18,
-    description: 'Department of Artificial Intelligence & Data Science, National Engineering College.',
-    aliases: ['Department of EIE', 'EIE', 'AI & DS', 'Artificial Intelligence & Data Science', 'AIDS Department']
-  },
-  {
-    id: 'ece', name: 'ECE Department', shortName: 'ECE',
-    icon: '\uD83D\uDCE1', category: 'Academic',
-    mapQuery: 'National+Engineering+College+Kovilpatti',
-    lat: 9.146995, lng: 77.830821, zoom: 18,
-    description: 'Electronics and Communication Engineering.',
-  },
-  {
-    id: 'mech', name: 'Mechanical Department', shortName: 'Mechanical',
-    icon: '\u2699\uFE0F', category: 'Academic',
-    mapQuery: 'National+Engineering+College+Kovilpatti',
-    lat: 9.149484, lng: 77.830424, zoom: 18,
-    description: 'Mechanical Engineering Department.',
-  },
-  {
-    id: 'civil', name: 'Civil Department', shortName: 'Civil',
-    icon: '\uD83C\uDFD7\uFE0F', category: 'Academic',
-    mapQuery: 'National+Engineering+College+Kovilpatti',
-    lat: 9.149079, lng: 77.831292, zoom: 18,
-    description: 'Civil Engineering Department.',
-  },
-  {
-    id: 'first-year', name: 'First Year Block', shortName: 'First Year',
-    icon: '\uD83C\uDF92', category: 'Academic',
-    mapQuery: 'National+Engineering+College+Kovilpatti',
-    lat: 9.148434, lng: 77.831234, zoom: 18,
-    description: 'First Year Engineering classes block.',
-  },
-  {
-    id: 'workshop', name: 'Workshop / Lab Block', shortName: 'Workshop',
-    icon: '\uD83D\uDD27', category: 'Academic',
-    mapQuery: 'National+Engineering+College+Kovilpatti',
-    lat: 9.1478, lng: 77.8308, zoom: 18,
-    description: 'Engineering workshops and practical labs.',
-  },
-  {
-    id: 'library', name: 'Central Library', shortName: 'Library',
-    icon: '\uD83D\uDCDA', category: 'Facility',
-    mapQuery: 'National+Engineering+College+Kovilpatti',
-    lat: 9.148434, lng: 77.831234, zoom: 18,
-    description: 'Central Library with digital and physical resources.',
-  },
-  {
-    id: 'auditorium', name: 'Auditorium', shortName: 'Auditorium',
-    icon: '\uD83C\uDFAD', category: 'Facility',
-    mapQuery: 'National+Engineering+College+Kovilpatti',
-    lat: 9.149398, lng: 77.832127, zoom: 18,
-    description: 'Main campus auditorium for events and seminars.',
-  },
-  {
-    id: 'canteen-1styear', name: '1st Year Canteen', shortName: '1st Yr Canteen',
-    icon: '\uD83C\uDF7D\uFE0F', category: 'Facility',
-    mapQuery: 'National+Engineering+College+Kovilpatti',
-    lat: 9.148171, lng: 77.831922, zoom: 18,
-    description: '1st Year student canteen - near First Year block.',
-  },
-  {
-    id: 'canteen-mech', name: 'Mech Canteen', shortName: 'Mech Canteen',
-    icon: '🍲', category: 'Facility',
-    mapQuery: 'National+Engineering+College+Kovilpatti',
-    lat: 9.149351, lng: 77.831919, zoom: 18,
-    description: 'Canteen near Mechanical Engineering Department.',
-  },
-  {
-    id: 'canteen-cse', name: 'CSE Canteen', shortName: 'CSE Canteen',
-    icon: '🥪', category: 'Facility',
-    mapQuery: 'National+Engineering+College+Kovilpatti',
-    lat: 9.1472272, lng: 77.8324029, zoom: 18,
-    description: 'Canteen near CSE / IT Department block.',
-  },
-  {
-    id: 'sports', name: 'Sports Ground', shortName: 'Sports Ground',
-    icon: '\u26BD', category: 'Facility',
-    mapQuery: 'National+Engineering+College+Kovilpatti',
-    lat: 9.1476, lng: 77.8295, zoom: 18,
-    description: 'Multi-sport ground - Cricket, Football, Basketball.',
-  },
-  {
-    id: 'boys-hostel-1', name: 'Boys Hostel 1', shortName: 'Boys Hostel 1',
-    icon: '\uD83C\uDFE0', category: 'Hostel',
-    mapQuery: 'NEC+Boys+Hostel+Kovilpatti',
-    lat: 9.147129, lng: 77.827891, zoom: 18,
-    description: 'Boys Hostel Block 1.',
-  },
-  {
-    id: 'boys-hostel-2', name: 'Boys Hostel 2', shortName: 'Boys Hostel 2',
-    icon: '\uD83C\uDFE0', category: 'Hostel',
-    mapQuery: 'NEC+Boys+Hostel+2+Kovilpatti',
-    lat: 9.148795, lng: 77.826977, zoom: 18,
-    description: 'Boys Hostel Block 2.',
-  },
-  {
-    id: 'ladies-hostel', name: 'Girls Hostel', shortName: 'Girls Hostel',
-    icon: '\uD83C\uDFE1', category: 'Hostel',
-    mapQuery: 'NEC+Girls+Hostel+Kovilpatti',
-    lat: 9.150541, lng: 77.833234, zoom: 18,
-    description: 'Girls Hostel Block - NEC Kovilpatti.',
-  },
-];
+import { buildings } from '../data/campusLocations';
+import CampusMapCanvas from '../components/map/CampusMapCanvas';
 
 const categoryColors = {
   Overview: '#a78bfa',
@@ -214,7 +58,6 @@ function getBearing(lat1, lon1, lat2, lon2) {
 
 export default function CampusMap() {
   const [selected, setSelected] = useState(buildings[0]);
-  const [mapSrc, setMapSrc]     = useState(buildMapUrl(buildings[0].mapQuery, buildings[0].zoom));
   const [filter, setFilter]     = useState('All');
   const [search, setSearch]     = useState('');
   const [sidebarCollapsedMobile, setSidebarCollapsedMobile] = useState(true);
@@ -227,6 +70,8 @@ export default function CampusMap() {
   const [guideText, setGuideText]   = useState('');
   const [isMobile, setIsMobile]     = useState(window.innerWidth <= 768);
   const [sheetExpanded, setSheetExpanded] = useState('collapsed'); // 'collapsed', 'half', 'full'
+  const [userCoords, setUserCoords] = useState(null);
+  const [recenterCount, setRecenterCount] = useState(0);
 
   // Real-time GPS watch refs
   const watchIdRef    = useRef(null);
@@ -270,7 +115,7 @@ export default function CampusMap() {
     setSelected(b);
     setNavInfo(null);
     setLocError(null);
-    setMapSrc(buildMapUrl(b.mapQuery, b.zoom));
+    setUserCoords(null);
     setSidebarCollapsedMobile(true);
   }, [stopWatch]);
 
@@ -295,14 +140,15 @@ export default function CampusMap() {
         const dest = destRef.current;
         if (!dest) return;
         const { latitude, longitude } = pos.coords;
-        userCoordsRef.current = { lat: latitude, lng: longitude };
+        const coordsObj = { lat: latitude, lng: longitude };
+        userCoordsRef.current = coordsObj;
+        setUserCoords(coordsObj);
         const dist = haversineDistance(latitude, longitude, dest.lat, dest.lng);
         setNavInfo({
           distance: formatDistance(dist),
           eta: formatETA(dist),
           arrival: new Date(Date.now() + Math.ceil((dist * 1.25) / 80) * 60000).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         });
-        setMapSrc(buildDirectionsUrl(latitude, longitude, dest.lat, dest.lng));
         setIsLocating(false);
       },
       (err) => {
@@ -323,12 +169,7 @@ export default function CampusMap() {
     if (isNavigating) {
       stopWatch();
       setNavStatus('Navigation Stopped');
-      // Reset back to preview map url
-      if (userCoordsRef.current) {
-        setMapSrc(buildDirectionsUrl(userCoordsRef.current.lat, userCoordsRef.current.lng, b.lat, b.lng));
-      } else {
-        setMapSrc(buildMapUrl(b.mapQuery, b.zoom));
-      }
+      setUserCoords(null);
       return;
     }
 
@@ -336,15 +177,13 @@ export default function CampusMap() {
     setIsNavigating(true);
     setNavStatus('Navigation Started');
 
-    // MOBILE MODE (Real GPS Tracking)
-    let lastMapLat = null;
-    let lastMapLng = null;
-
     watchIdRef.current = navigator.geolocation.watchPosition(
       (pos) => {
         const { latitude, longitude, accuracy } = pos.coords;
         console.log(`[Live GPS Node] Lat: ${latitude}, Lng: ${longitude}, Accuracy: ${accuracy}m`);
-        userCoordsRef.current = { lat: latitude, lng: longitude };
+        const coordsObj = { lat: latitude, lng: longitude };
+        userCoordsRef.current = coordsObj;
+        setUserCoords(coordsObj);
         const dest = destRef.current;
         if (!dest) return;
 
@@ -372,20 +211,6 @@ export default function CampusMap() {
           else if (bearing >= 202.5 && bearing < 247.5) setGuideText('↙ Head Southwest');
           else if (bearing >= 247.5 && bearing < 292.5) setGuideText('← Head West');
           else setGuideText('↖ Head Northwest');
-        }
-
-        // Follow user coordinates
-        if (lastMapLat === null || lastMapLng === null) {
-          lastMapLat = latitude;
-          lastMapLng = longitude;
-          setMapSrc(`https://maps.google.com/maps?saddr=${latitude},${longitude}&daddr=${dest.lat},${dest.lng}&dirflg=w&mode=d&keep=1&iwloc=A&output=embed`);
-        } else {
-          const movement = haversineDistance(latitude, longitude, lastMapLat, lastMapLng);
-          if (movement >= 10) {
-            lastMapLat = latitude;
-            lastMapLng = longitude;
-            setMapSrc(`https://maps.google.com/maps?saddr=${latitude},${longitude}&daddr=${dest.lat},${dest.lng}&dirflg=w&mode=d&keep=1&iwloc=A&output=embed`);
-          }
         }
       },
       (err) => {
@@ -804,35 +629,25 @@ export default function CampusMap() {
           </motion.div>
         )}
 
-        {/* Google Maps iframe */}
+        {/* Google Maps JS SDK Canvas */}
         <div className={styles.mapFrame}>
-          <AnimatePresence mode="wait">
-            <motion.iframe
-              key={mapSrc}
-              src={mapSrc}
-              className={styles.iframe}
-              title="Campus Location"
-              allowFullScreen
-              loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.35 }}
-            />
-          </AnimatePresence>
+          <CampusMapCanvas
+            selected={selected}
+            userCoords={userCoords}
+            isNavigating={isNavigating}
+            navInfo={navInfo}
+            onNavigate={handleNavigate}
+            buildings={buildings}
+            recenterTrigger={recenterCount}
+          />
 
           {/* Floating Actions on Map */}
-          {isMobile && userCoordsRef.current && (
+          {isMobile && userCoords && (
             <div className={styles.mapFloatingActions}>
               <button
                 className={styles.floatingActionBtn}
                 title="Recenter Location"
-                onClick={() => {
-                  if (userCoordsRef.current) {
-                    setMapSrc(buildDirectionsUrl(userCoordsRef.current.lat, userCoordsRef.current.lng, selected.lat, selected.lng));
-                  }
-                }}
+                onClick={() => setRecenterCount(prev => prev + 1)}
               >
                 🎯
               </button>
